@@ -1,5 +1,5 @@
 {
   "name": "tutoliella",
- "main": "srrc/pages/index.astro"
+ "main": "srrc/pages/index.astro",
   "compatibility_date": "2025-07-13"
 }
