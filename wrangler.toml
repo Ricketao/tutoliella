@@ -1,0 +1,10 @@
+name = "tutoliella"
+compatibility_date = "2025-07-13"
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"
+dir = "."
+main = "dist/worker.mjs"
