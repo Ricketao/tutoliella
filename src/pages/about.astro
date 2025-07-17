@@ -1,4 +1,7 @@
 ---
+import '../styles/global.css';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
 const pageTitle = "私について";
 
 const identity = {
@@ -13,20 +16,33 @@ const skills = ["HTML", "CSS", "JavaScript", "React", "Astro", "ドキュメン�
 const happy = true;
 const finished = false;
 const goal = 3;
+
+const skillColor = "navy";
+const fontWeight = "bold";
+const textCase = "uppercase";
 ---
 
-<html lang="en">
+<html lang="ja">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		 <title>{pageTitle}</title>
+		  <style define:vars={{skillColor, fontWeight, textCase}}>
+      h1 {
+        color: purple;
+        font-size: 4rem;
+      }
+	  .skill {
+	color: var(--skillColor);
+    font-weight: var(--fontWeight);
+    text-transform: var(--textCase);
+  }
+    </style>
 	</head>
 	<body>
-        <a href="/">ホーム</a>
-<a href="/about/">概要</a>
-<a href="/blog/">ブログ</a>
+    <Navigation />
 		 <h1>{pageTitle}</h1>
   <h2>... そして私の新しいAstroサイトについて！</h2>
 
@@ -43,12 +59,13 @@ const goal = 3;
 </ul>
 <p>私のスキルは以下の通りです。</p>
 <ul>
-  {skills.map((skill) => <li>{skill}</li>)}
+  {skills.map((skill) => <li class="skill">{skill}</li>)}
 </ul>
 {happy && <p>I am happy to be learning Astro! Astroを学べて幸せです！</p>}
 
 {finished && <p>I finished this tutorial! このチュートリアルを終えました！</p>}
 
 {goal === 3 ? <p>My goal is to finish in 3 days. 3日で終えるのが目標です。</p> : <p>My goal is not 3 days. 3日が目標ではありません。</p>}
+ <Footer />
 	</body>
 </html>
