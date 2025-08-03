@@ -1,0 +1,76 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogPost from "../../components/BlogPost.astro";
+import type { MarkdownInstance } from 'astro';
+
+type Frontmatter = {
+  title: string;
+  tags: string[];
+};
+
+export async function getStaticPaths() {
+    // const allPosts = import.meta.glob<MarkdownInstance<Frontmatter>>('../posts/*.md');
+    const postModules = import.meta.glob('../posts/*.md') as Record<
+  string,
+  () => Promise<MarkdownInstance<Frontmatter>>
+>;
+    const allPosts = await Promise.all(Object.values(postModules).map((fn) => fn()));
+    const uniqueTags = [...new Set(allPosts.map((post) => post.frontmatter.tags).flat())];
+
+    console.log("getStaticPaths: allPosts = ", allPosts.map(p => p.frontmatter.title));
+console.log("uniqueTags = ", uniqueTags);
+console.log("Generated paths:");
+    return uniqueTags.map((tag) => {
+        const filteredPosts = allPosts.filter((post) => post.frontmatter.tags.includes(tag));
+        console.log(` - /tags/${tag}: ${filteredPosts.length} posts`);
+        return {
+        params: { tag },
+        props: { posts: filteredPosts },
+        };
+    });
+
+//         // tags をユニークに抽出
+//   const tagsSet = new Set<string>();
+//   allPosts.forEach(post => {
+//     post.frontmatter.tags?.forEach(tag => tagsSet.add(tag));
+//   });
+
+//   return uniqueTags.map((tag) => {
+//     const filteredPosts = allPosts.filter((post) => post.frontmatter.tags.includes(tag));
+//     return {
+//       params: { tag },
+//       props: { posts: filteredPosts },
+//     };
+//   });
+  //return tags.map(tag => ({
+  //  params: { tag },
+  //}));
+
+  //return [
+   // {params: {tag: "astro"}, props: {posts: allPosts }},
+    //{params: {tag: "成功"}, props: {posts: allPosts }},
+   // {params: {tag: "コミュニティ"}, props: {posts: allPosts }},
+   // {params: {tag: "ブログ"}, props: {posts: allPosts }},
+   // {params: {tag: "後退"}, props: {posts: allPosts }},
+   // {params: {tag: "公開学習"}, props: {posts: allPosts }}
+  //];
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props ?? {};
+
+---
+<BaseLayout pageTitle={tag}>
+  <p>{tag}のタグが付いた記事</p>
+    <ul>
+  {Array.isArray(posts) && posts.length > 0 ? (
+    posts.map((post) => (
+      <BlogPost url={post.url} title={post.frontmatter.title} />
+    ))
+  ) : (
+    <li>記事が見つかりません</li>
+  )}
+</ul>
+</BaseLayout>
